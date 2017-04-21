@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
+    public float speed = 5.0f;
     private Animator animator;
     private Rigidbody2D rigidBody;
 
@@ -16,13 +17,16 @@ public class PlayerController : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 
-        Vector2 move = new Vector2(Input.GetAxisRaw("Horizontal") * 2.0f, Input.GetAxisRaw("Vertical"));
-
-        if (move != Vector2.zero)
+        float walkingInput = Input.GetAxisRaw("Horizontal");
+        if (walkingInput != 0)
         {
-            rigidBody.AddForce(move);
-            animator.SetTrigger("playerWalking");
+            animator.SetBool("playerWalking", true);
+            rigidBody.velocity = new Vector2(walkingInput * speed, rigidBody.position.y);
         }
-
+        else 
+        {
+            animator.SetBool("playerWalking", false);
+            rigidBody.velocity = new Vector2(0,0);
+        }
     }
 }
