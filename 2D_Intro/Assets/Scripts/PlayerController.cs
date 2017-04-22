@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
-    public float speed = 5.0f;
+    public float speedFactor = 5.0f;
+    private float jumpFactor = 150f;
+    private bool facingRight = true;
+    private bool grounded = true;
     private Animator animator;
     private Rigidbody2D rigidBody;
 
@@ -18,15 +21,41 @@ public class PlayerController : MonoBehaviour {
 	void FixedUpdate () {
 
         float walkingInput = Input.GetAxisRaw("Horizontal");
-        if (walkingInput != 0)
+        float jumpingInput = Input.GetAxisRaw("Vertical");
+
+        animator.SetBool("playerWalking", walkingInput != 0);
+        animator.SetBool("playerJumping", jumpingInput != 0);
+
+        rigidBody.velocity = new Vector2(walkingInput * speedFactor, rigidBody.velocity.y);
+
+        if(jumpingInput > 0 && grounded)
         {
-            animator.SetBool("playerWalking", true);
-            rigidBody.velocity = new Vector2(walkingInput * speed, rigidBody.position.y);
+            rigidBody.AddForce(Vector2.up * jumpFactor);
         }
-        else 
+
+        if (walkingInput > 0 && !facingRight)
         {
-            animator.SetBool("playerWalking", false);
-            rigidBody.velocity = new Vector2(0,0);
+            FlipFacing();
         }
+        else if(walkingInput < 0 && facingRight)
+        {
+            FlipFacing();
+        }
+    }
+
+    void OnCollisionExit2D(Collision2D coll)
+    {
+        grounded = false;
+    }
+
+    void OnCollisionEnter2D(Collision2D coll)
+    {
+        grounded = true;
+    }
+
+    void FlipFacing()
+    {
+        facingRight = !facingRight;
+        transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y);
     }
 }
