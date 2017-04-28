@@ -86,3 +86,107 @@ _*NOW*_ let's press `Play` and see what happens.
 
 Our hero stays right where he is supposed to, on top of the platform! And now he's ready to get some movement commands. For this, we're going to have to make a new Script and dive into some C# code. 
 
+
+Open the `Scripts` folder in your `Project` view and right click. Navigate to `Create -> C# Script`. This will create a new script that we will use to control our character. Let's name it `MovementController` and then double click on it to open it. 
+
+The script will open up Visual Studio if you have it installed, or MonoDevelop by default. When we inspect the script we'll notice that a class already exists and two pre-existing functions: `void Start()` and `void Update()`.
+
+`void Start()` is a function that is called only once when the object is instantiated (or... started) and `void Update()` is called once per frame.
+
+```C#
+    //1
+    public float speedFactor = 5.0f;
+
+    //2
+    private Rigidbody2D rigidBody;
+
+    //3
+    void Start () {
+        rigidBody = GetComponent<Rigidbody2D>();
+    }
+
+    void Update () {
+        //4
+        float walkingInput = Input.GetAxisRaw("Horizontal");
+
+        //5
+        rigidBody.velocity = new Vector2(walkingInput * speedFactor, rigidBody.velocity.y);
+    }
+```
+This snippet shows the code that we will be adding for this section and the comments show corresponding numbers that we'll use to break the block down. 
+
+Here we've: 
+ 1. Defined a `float` (decimal number) that we'll use as a factor to determine how fast our hero can go. It is `public` so that the Unity editor can access it and so it can be changed in the GUI. We'll touch back on this later. 
+ 2. Defined a `private` variable to access our `Rigidbody2D` component and called it `rigidBody`. It's private so that other classes can't just go messing with its properties.
+ 3. Initialized the `rigidBody` variable once our scene `Start()`s up. We will get the `Rigidbody2D` component of the object this script is attached to. (This means that you will get an error if you put this on something that does _not_ have a `Rigidbody2D` component) 
+ 4. Defined a local `float` called `walkingInput` that will give us the `Horizontal` axis that is inputted by the user. This is a pre-defined Unity axis that works with the left and right arrows, the `A` and `D` keys and joysticks. (For more information please reference the [Unity Scripting API: Input](https://docs.unity3d.com/ScriptReference/Input.html))
+    * Note that we are calling `Input.GetAxisRaw` instead of `Input.GetAxis`. `Input.GetAxis` would give us a gradual incline the more we held the button down, to a max of `1`. `Input.GetAxisRaw` gives us either a `0` or a `1`, so our hero can run at full speed from the beginning and not have to ramp up to it.
+ 5. Set the velocity of our `Rigidbody2D` component to be a new [Vector2](https://docs.unity3d.com/ScriptReference/Vector2.html) where the X (or Horizontal) velocity is equal to our `walkingInput` multiplied by our `speedFactor` and our Y (or vertical) velocity is equal to whatever the velocity of the `Rigidbody2D` component is (`rigidBody.velocity.y`)
+    * There are a few ways to move this character, and since we want the character to move instantly without any ramp-up, we have chosen to update his velocity directly. Later we'll show a different example of movement by adding force to the character, instead of changing the velocity directly.
+   
+Now that we've scripted the user being able to move horizontally, let's go back to the Unity Editor and use our new script! (Make sure to save before moving though) 
+
+In the `Project` view, click on your `MovementController` script and drag it to the `spelunky_0` Game Object in the `Hierarchy` view.     * Alternatively, if you select the `spelunky_0` Game Object beforehand, then you can drag your `MovementController` script to the `Inspector` view
+
+If everything is correct up until this point (meaning you don't have any errors indicated by red text in the bottom left of the editor) then you should be able to select your `spelunky_0` Game Object and see the new `Movement Controller (Script)` component in your inspector. 
+  * Take note of the `Speed Factor` parameter that is editable in the editor. It shows the default `5` but can be changed to any number to make your hero move faster or slower as you please!
+
+Let's click `Play` again and see if our hero can move now! 
+
+HUZZAH! He moves! But play around with it for a little bit and you'll notice a few things... 
+
+1. He only faces one direction, so if you move him backwards he doesn't flip around
+2. He stands still while moving, he's moving but not walking!
+3. You can't jump (that's expected since we only got the horizontal input)
+
+To fix number `1`, let's hop back into the movement script. We can have him flip around by editing the transform of the sprite. We will apply a negative scale to the X (horizontal) axis and it will flip the character for us. 
+
+```C#
+    public float speedFactor = 5.0f;
+    private Rigidbody2D rigidBody;
+
+    //1
+    private bool facingRight = true;
+
+    void Start () {
+        rigidBody = GetComponent<Rigidbody2D>();
+    }
+
+    void Update () {
+        float walkingInput = Input.GetAxisRaw("Horizontal");
+        rigidBody.velocity = new Vector2(walkingInput * speedFactor, rigidBody.velocity.y);
+
+        //2
+        if ( walkingInput > 0 && !facingRight)
+        {
+            FlipFacing();
+        }
+        else if ( walkingInput < 0 && facingRight)
+        {
+            FlipFacing();
+        }
+    }
+
+    //3
+    void FlipFacing()
+    {
+        facingRight = !facingRight;
+        transform.localScale = new Vector2(-transform.localScale.x, transform.localScale.y);
+    }
+```
+
+Here's our new and improved `MovementController` class. We've: 
+
+1. Added a new `bool`ean (`true` or `false`) variable called `facingRight` that we will intialize with the value `true` since our hero faces right at the start. 
+2. Added a few conditions:
+    * If we pressed the key to go to the right (`walkingInput > 0`) AND if we're not facing right already (`!facingRight`) then we will call a method called `FlipFacing()` which we'll define later
+    * If we pressed the key to go to the left (`walkingInput < 0`) AND if we're facing right (`facingRight`) then we will call that same `FlipFacing()` method which will flip our hero's sprite
+3. Defined that `FlipFacing()` method. This is what is being called. In this method we are doing two things:
+    * Setting `facingRight` to what it was not before `!facingRight` (if `true` it's now `false`, visa versa) 
+    * Setting the `localScale` of the `transform` we are attached to to be a new `Vector2` where the `X (Horizontal)` value is the negative version of what it was before `-transform.localScale.x` and the `Y (Vertical)` value to the same as it was before `transform.localScale.y`
+
+Now we can go back to our Unity Editor and hit `Play` since our script is already attached to our hero. 
+
+If all goes well, our hero should now flip back and forth when hitting the left and right keys. Now we need to figure out how to get him to actually _look_ like he's walking!
+
+
