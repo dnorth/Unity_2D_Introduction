@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour {
 
     public float speedFactor = 5.0f;
-    private float jumpFactor = 150f;
+    private float jumpFactor = 300;
     private bool facingRight = true;
     private bool grounded = true;
     private Animator animator;
@@ -24,13 +24,14 @@ public class PlayerController : MonoBehaviour {
         float jumpingInput = Input.GetAxisRaw("Vertical");
 
         animator.SetBool("playerWalking", walkingInput != 0);
-        animator.SetBool("playerJumping", jumpingInput != 0);
+        animator.SetBool("playerJumping", !grounded);
 
         rigidBody.velocity = new Vector2(walkingInput * speedFactor, rigidBody.velocity.y);
 
         if(jumpingInput > 0 && grounded)
         {
             rigidBody.AddForce(Vector2.up * jumpFactor);
+            grounded = false;
         }
 
         if (walkingInput > 0 && !facingRight)
@@ -41,11 +42,6 @@ public class PlayerController : MonoBehaviour {
         {
             FlipFacing();
         }
-    }
-
-    void OnCollisionExit2D(Collision2D coll)
-    {
-        grounded = false;
     }
 
     void OnCollisionEnter2D(Collision2D coll)
