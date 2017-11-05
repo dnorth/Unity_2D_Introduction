@@ -15,8 +15,8 @@ And if you didn't like it or found that something is wrong with this, then feel 
 
 Also if you feel so inclined... I wouldn't turn down a tip 😄 
 
-**ETH: 0x7b2c969df67b678ed528284e8f7a24c9f3bd09c4**
+**ETH: 0x11b033331B67fa888fc577d7E356f594Cc06b4AD**
 
-**BTC: 1MuG7v8RCnTc95ZvR6Nkr3y1nd9bg5wYXd**
+**BTC: 34KjdDurKfBdPA8dVmJaagCHnsu3jiWwsR**
 
-**LTC: LN1VHuQTCRX2SnhtTQRW3KirgkfBjDamrp**
+**LTC: LMaKJy4v1s9gDNvwocvwSxWN2hisvAUiW5**
