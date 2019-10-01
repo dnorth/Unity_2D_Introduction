@@ -16,13 +16,14 @@ public class PlayerController : MonoBehaviour {
         animator = GetComponent<Animator>();
         rigidBody = GetComponent<Rigidbody2D>();    	
 	}
+	void Update()
+	{
+	 float walkingInput = Input.GetAxis("Horizontal");
+         float jumpingInput = Input.GetAxis("Vertical");
+	}
 	
-	// Update is called once per frame
 	void FixedUpdate () {
-
-        float walkingInput = Input.GetAxisRaw("Horizontal");
-        float jumpingInput = Input.GetAxisRaw("Vertical");
-
+		
         animator.SetBool("playerWalking", walkingInput != 0);
         animator.SetBool("playerJumping", !grounded);
 
