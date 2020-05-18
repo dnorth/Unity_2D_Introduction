@@ -12,11 +12,3 @@ Thanks so much for checking out this tutorial! I had a lot of fun making it, and
 If you enjoyed this then please send me a message at `Lds.north@gmail.com` I'd love to hear about your experience!
 
 And if you didn't like it or found that something is wrong with this, then feel free to email me, submit an issue, or submit a pull request! 
-
-Also if you feel so inclined... I wouldn't turn down a tip 😄 
-
-**ETH: 0x11b033331B67fa888fc577d7E356f594Cc06b4AD**
-
-**BTC: 34KjdDurKfBdPA8dVmJaagCHnsu3jiWwsR**
-
-**LTC: LMaKJy4v1s9gDNvwocvwSxWN2hisvAUiW5**
